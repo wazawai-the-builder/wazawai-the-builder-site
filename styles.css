@@ -134,6 +134,7 @@ h1 {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.45);
   padding: 12px 22px;
+  font-family: "YFFRARETRIAL Power ExtraLight", Arial, sans-serif;
   font-size: 0.85rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -204,7 +205,7 @@ h2 {
 }
 
 .footer {
-  padding: 28px 0;
+  padding: 28px 0 52px;
 }
 
 .footer-content {
@@ -212,7 +213,8 @@ h2 {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 20px;
+   column-gap: 96px;
+  row-gap: 56px;
 }
 
 .footer a {
@@ -240,14 +242,20 @@ h2 {
 .modal-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.74);
-  backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
   opacity: 0;
-  transition: opacity 360ms ease;
+  transition:
+    opacity 480ms cubic-bezier(0.33, 1, 0.68, 1),
+    backdrop-filter 620ms cubic-bezier(0.33, 1, 0.68, 1),
+    -webkit-backdrop-filter 620ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .modal.is-open .modal-backdrop {
   opacity: 1;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .modal-dialog {
@@ -323,7 +331,7 @@ h2 {
   background: #fff;
 }
 
-.qr-image-telegram {
+.qr-image-themed {
   filter: grayscale(1) contrast(1.35) brightness(1.05);
 }
 
