@@ -1,0 +1,14 @@
+<svg width="560" height="140" viewBox="0 0 560 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2" y="2" width="556" height="136" rx="10" stroke="#F3F3F3" stroke-opacity="0.22" stroke-width="2"/>
+  <path d="M38 30H64L80 74L96 30H122L90 110H70L38 30Z" fill="#F3F3F3"/>
+  <path d="M124 110L158 30H184L218 110H193L187 95H155L149 110H124ZM162 77H180L171 51L162 77Z" fill="#F3F3F3"/>
+  <path d="M220 30H246L262 74L278 30H304L272 110H252L220 30Z" fill="#F3F3F3"/>
+  <path d="M306 110L340 30H366L400 110H375L369 95H337L331 110H306ZM344 77H362L353 51L344 77Z" fill="#F3F3F3"/>
+  <path d="M406 30H432V110H406V30Z" fill="#F3F3F3"/>
+  <path d="M438 30H464V110H438V30Z" fill="#F3F3F3"/>
+  <path d="M478 30H504V110H478V30Z" fill="#F3F3F3"/>
+  <circle cx="491" cy="20" r="5" fill="#F3F3F3"/>
+  <path d="M518 30H544V110H518V30Z" fill="#F3F3F3"/>
+  <path d="M16 124H544" stroke="#F3F3F3" stroke-opacity="0.35" stroke-width="2"/>
+  <text x="24" y="128" fill="#F3F3F3" fill-opacity="0.72" font-family="Arial, sans-serif" font-size="10" letter-spacing="3">THE FOUNDER</text>
+</svg>
