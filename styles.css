@@ -213,7 +213,7 @@ h2 {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-   column-gap: 96px;
+  column-gap: 96px;
   row-gap: 56px;
 }
 
