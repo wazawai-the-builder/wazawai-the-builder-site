@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wazawai — Боты для Telegram и MAX</title>
+  <title>WAZAWAI — Боты для Telegram и MAX</title>
   <meta name="description" content="Разработка ботов для Telegram и MAX: продажи, поддержка, автоматизация, интеграции.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
@@ -11,7 +11,7 @@
 <body>
   <header class="header">
     <div class="container header-inner">
-      <a class="logo" href="#" aria-label="Wazawai">
+      <a class="logo" href="#" aria-label="WAZAWAI">
         <span class="logo-main">WAZAWAI</span>
         <span class="logo-sub">the founder</span>
       </a>
@@ -20,9 +20,22 @@
 
   <main>
     <section class="hero">
+      <div class="hero-floating" aria-hidden="true">
+        <div class="floating-badge floating-badge-telegram">
+          <img class="floating-badge-icon-image floating-badge-icon-image-telegram" src="assets/telegram-icon.png" alt="">
+          <span class="floating-badge-label">Telegram</span>
+        </div>
+        <div class="floating-badge floating-badge-max">
+          <img class="floating-badge-icon-image floating-badge-icon-image-max" src="assets/max-icon.png" alt="">
+          <span class="floating-badge-label">MAX</span>
+        </div>
+      </div>
       <div class="container hero-content reveal">
         <p class="eyebrow">Услуги разработки ботов</p>
-        <h1 class="hero-title">Создаю ботов для Telegram и MAX под задачи бизнеса</h1>
+        <h1 class="hero-title">
+          <span class="hero-title-line reveal-line-1">Создаю ботов для Telegram и MAX</span>
+          <span class="hero-title-line reveal-line-2">под задачи бизнеса</span>
+        </h1>
         <p class="hero-description">
           Автоматизирую продажи, поддержку и внутренние процессы:
           от простых сценариев до сложных интеграций с CRM и оплатами.
@@ -76,6 +89,18 @@
     <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title">
       <button class="modal-close" id="close-qr-modal" type="button" aria-label="Закрыть">×</button>
       <h3 id="qr-modal-title">Выберите удобный контакт</h3>
+      <form class="contact-form" id="contact-form">
+        <label class="contact-label" for="contact-nickname">Ваш нинейм и платформа</label>
+        <input class="contact-input" id="contact-nickname" name="nickname" type="text" placeholder="@nickname" autocomplete="off" required>
+        <div class="contact-socials" role="group" aria-label="Выбор соцсети">
+          <button class="social-option is-active" type="button" data-platform="telegram">Telegram</button>
+          <button class="social-option" type="button" data-platform="instagram">Instagram</button>
+          <button class="social-option" type="button" data-platform="max">MAX</button>
+        </div>
+
+        <button class="button contact-submit" type="submit">Отправить заявку</button>
+        <p class="contact-status" id="contact-status" aria-live="polite"></p>
+      </form>
       <div class="qr-grid">
         <article class="qr-card">
           <p>Telegram</p>
@@ -106,9 +131,18 @@
     </div>
   </footer>
   <script>
+    const CONTACT_API_URL = "https://supertaina.abuzapeks.workers.dev/contact";
+
     const modal = document.getElementById("qr-modal");
     const openBtn = document.getElementById("open-qr-modal");
     const closeBtn = document.getElementById("close-qr-modal");
+    const contactForm = document.getElementById("contact-form");
+    const contactNickname = document.getElementById("contact-nickname");
+    const contactStatus = document.getElementById("contact-status");
+    const socialButtons = Array.from(document.querySelectorAll(".social-option"));
+    const hero = document.querySelector(".hero");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let selectedPlatform = "telegram";
 
     const closeModal = () => {
       modal.classList.remove("is-open");
@@ -133,6 +167,173 @@
         closeModal();
       }
     });
+
+    const setStatus = (text, isError = false) => {
+      if (!contactStatus) {
+        return;
+      }
+      contactStatus.textContent = text;
+      contactStatus.classList.toggle("is-error", isError);
+      contactStatus.classList.toggle("is-success", !isError && text.length > 0);
+    };
+
+    const setActivePlatform = (platform) => {
+      selectedPlatform = platform;
+      socialButtons.forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.platform === platform);
+      });
+    };
+
+    socialButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        setActivePlatform(button.dataset.platform || "telegram");
+      });
+    });
+
+    if (contactForm) {
+      contactForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const rawNickname = (contactNickname?.value || "").trim();
+        const cleanNickname = rawNickname.replace(/^@/, "");
+
+        if (!/^[A-Za-z0-9._]{3,64}$/.test(cleanNickname)) {
+          setStatus("Введите корректный никнейм (3-64 символа: буквы, цифры, точка, _).", true);
+          return;
+        }
+
+        if (!CONTACT_API_URL || CONTACT_API_URL.includes("your-worker-subdomain")) {
+          setStatus("Укажите CONTACT_API_URL Cloudflare Worker в скрипте.", true);
+          return;
+        }
+
+        setStatus("Отправляю заявку...");
+        const nicknameForMessage = `@${cleanNickname}`;
+        const profileLink = selectedPlatform === "telegram"
+          ? `https://t.me/${cleanNickname}`
+          : selectedPlatform === "instagram"
+            ? `https://instagram.com/${cleanNickname}`
+            : "ссылка недоступна для MAX";
+
+        try {
+          const response = await fetch(CONTACT_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              nickname: nicknameForMessage,
+              platform: selectedPlatform,
+              profileLink
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error("Telegram API error");
+          }
+
+          setStatus("Заявка отправлена. Скоро свяжусь с вами.");
+          contactForm.reset();
+          setActivePlatform("telegram");
+        } catch (error) {
+          setStatus("Не удалось отправить заявку. Попробуйте позже.", true);
+        }
+      });
+    }
+
+    if (hero && !prefersReducedMotion) {
+      const title = hero.querySelector(".hero-title");
+      const lines = title ? Array.from(title.querySelectorAll(".hero-title-line")) : [];
+      const scatterRadius = 120;
+      const scatterStrength = 20;
+      let rafId = null;
+      let pointerX = 0;
+      let pointerY = 0;
+
+      const toChars = (line) => {
+        const text = line.textContent || "";
+        line.textContent = "";
+
+        const words = text.trim().split(/\s+/);
+        words.forEach((word, wordIndex) => {
+          const wordSpan = document.createElement("span");
+          wordSpan.className = "hero-word";
+
+          for (const char of word) {
+            const span = document.createElement("span");
+            span.className = "hero-char";
+            span.textContent = char;
+            wordSpan.appendChild(span);
+          }
+
+          line.appendChild(wordSpan);
+          if (wordIndex < words.length - 1) {
+            line.appendChild(document.createTextNode("\u00A0"));
+          }
+        });
+      };
+
+      const getChars = () => {
+        if (!title) {
+          return [];
+        }
+        return Array.from(title.querySelectorAll(".hero-char"));
+      };
+
+      const resetChars = () => {
+        if (!title) {
+          return;
+        }
+
+        getChars().forEach((char) => {
+          char.style.transform = "translate3d(0, 0, 0) rotate(0deg)";
+        });
+      };
+
+      const scatterChars = () => {
+        rafId = null;
+        if (!title) {
+          return;
+        }
+
+        getChars().forEach((char) => {
+          const rect = char.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dx = cx - pointerX;
+          const dy = cy - pointerY;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist > scatterRadius || dist === 0) {
+            char.style.transform = "translate3d(0, 0, 0) rotate(0deg)";
+            return;
+          }
+
+          const force = Math.pow(1 - dist / scatterRadius, 1.55);
+          const pushX = (dx / dist) * scatterStrength * force;
+          const pushY = (dy / dist) * scatterStrength * 0.6 * force;
+          const rotate = pushX * 0.22;
+
+          char.style.transform = `translate3d(${pushX.toFixed(2)}px, ${pushY.toFixed(2)}px, 0) rotate(${rotate.toFixed(2)}deg)`;
+        });
+      };
+
+      lines.forEach(toChars);
+
+      hero.addEventListener("mousemove", (event) => {
+        pointerX = event.clientX;
+        pointerY = event.clientY;
+
+        if (rafId === null) {
+          rafId = window.requestAnimationFrame(scatterChars);
+        }
+      });
+
+      hero.addEventListener("mouseleave", () => {
+        if (rafId !== null) {
+          window.cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+        resetChars();
+      });
+    }
   </script>
 </body>
 </html>
