@@ -853,3 +853,43 @@ h2 {
     grid-template-columns: 1fr;
   }
 }
+
+/* Телефоны: иконки Telegram/MAX под текстом, без наложения на заголовок */
+@media (max-width: 640px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .hero-content {
+    order: 1;
+    padding: 40px 0 28px;
+  }
+
+  .hero-floating {
+    position: static;
+    inset: auto;
+    order: 2;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 0 4% 36px;
+    opacity: 1;
+    z-index: 2;
+  }
+
+  .floating-badge-telegram,
+  .floating-badge-max {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    animation: none;
+  }
+}
