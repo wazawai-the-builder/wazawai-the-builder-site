@@ -425,6 +425,8 @@ h2 {
   inset: 0;
   z-index: 20;
   display: block;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -460,6 +462,8 @@ h2 {
   position: relative;
   width: min(680px, 92%);
   margin: 8vh auto 0;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
   background: linear-gradient(165deg, rgba(21, 21, 21, 0.98), rgba(13, 13, 13, 0.95));
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 14px;
@@ -854,42 +858,15 @@ h2 {
   }
 }
 
-/* Телефоны: иконки Telegram/MAX под текстом, без наложения на заголовок */
 @media (max-width: 640px) {
-  .hero {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-  }
-
-  .hero-content {
-    order: 1;
-    padding: 40px 0 28px;
-  }
-
   .hero-floating {
-    position: static;
-    inset: auto;
-    order: 2;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 0 4% 36px;
-    opacity: 1;
-    z-index: 2;
+    display: none;
   }
 
-  .floating-badge-telegram,
-  .floating-badge-max {
-    position: relative;
-    left: auto;
-    right: auto;
-    top: auto;
-    bottom: auto;
-    animation: none;
+  .modal-dialog {
+    width: min(680px, 94%);
+    margin: 16px auto;
+    max-height: calc(100dvh - 32px);
+    padding: 20px 16px 16px;
   }
 }
