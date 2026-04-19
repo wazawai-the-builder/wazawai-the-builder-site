@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <style>
+      @font-face {
+        font-family: "Manasco";
+        src: url("../fonts/Manasco (sherbackoffalex).otf") format("opentype");
+      }
+      .bg { fill: #000000; }
+      .fg { fill: #ffffff; }
+      .word {
+        fill: #ffffff;
+        font-family: "Manasco", Arial, sans-serif;
+        font-size: 164px;
+        letter-spacing: 12px;
+      }
+    </style>
+  </defs>
+  <rect class="bg" width="1024" height="1024" />
+  <polygon class="fg" points="86,182 260,182 938,842 764,842" />
+  <polygon class="fg" points="86,842 260,842 938,182 764,182" />
+  <rect x="96" y="414" width="832" height="196" class="bg" />
+  <text class="word" x="512" y="550" text-anchor="middle">WAZAWAI</text>
+</svg>

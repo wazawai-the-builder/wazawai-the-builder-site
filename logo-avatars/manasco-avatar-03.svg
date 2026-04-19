@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <style>
+      @font-face {
+        font-family: "Manasco";
+        src: url("../fonts/Manasco (sherbackoffalex).otf") format("opentype");
+      }
+      .bg { fill: #000000; }
+      .fg { fill: #ffffff; }
+      .word {
+        fill: #ffffff;
+        font-family: "Manasco", Arial, sans-serif;
+        font-size: 188px;
+        letter-spacing: 14px;
+      }
+    </style>
+  </defs>
+  <rect class="bg" width="1024" height="1024" />
+  <rect x="132" y="220" width="760" height="66" class="fg" />
+  <rect x="132" y="748" width="760" height="66" class="fg" />
+  <rect x="132" y="352" width="300" height="36" class="fg" />
+  <rect x="592" y="636" width="300" height="36" class="fg" />
+  <text class="word" x="512" y="600" text-anchor="middle">WAZAWAI</text>
+</svg>

@@ -14,6 +14,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Cloudflare Wrangler (local cache / account metadata)
+.wrangler/
+
 # Logs
 *.log
 npm-debug.log*
