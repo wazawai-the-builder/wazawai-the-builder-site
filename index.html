@@ -132,7 +132,7 @@
       <button class="modal-close" id="close-qr-modal" type="button" aria-label="Закрыть">×</button>
       <h3 id="qr-modal-title">Выберите удобный контакт</h3>
       <form class="contact-form" id="contact-form">
-        <label class="contact-label" for="contact-nickname">Ваш нинейм и платформа</label>
+        <label class="contact-label" for="contact-nickname"><span id="contact-field-label">Ваш никнейм и платформа</span></label>
         <input class="contact-input" id="contact-nickname" name="nickname" type="text" placeholder="@nickname" autocomplete="off" required>
         <div class="contact-socials" role="group" aria-label="Выбор соцсети">
           <button class="social-option is-active" type="button" data-platform="telegram">Telegram</button>
@@ -190,6 +190,7 @@
     const closeBtn = document.getElementById("close-qr-modal");
     const contactForm = document.getElementById("contact-form");
     const contactNickname = document.getElementById("contact-nickname");
+    const contactFieldLabel = document.getElementById("contact-field-label");
     const contactStatus = document.getElementById("contact-status");
     const socialButtons = Array.from(document.querySelectorAll(".social-option"));
     const hero = document.querySelector(".hero");
@@ -229,15 +230,56 @@
       contactStatus.classList.toggle("is-success", !isError && text.length > 0);
     };
 
+    const syncContactFieldForPlatform = () => {
+      if (!contactNickname || !contactFieldLabel) {
+        return;
+      }
+      if (selectedPlatform === "max") {
+        contactFieldLabel.textContent = "Ваш номер телефона и платформа";
+        contactNickname.type = "tel";
+        contactNickname.placeholder = "+7 (999) 123-45-67";
+        contactNickname.setAttribute("inputmode", "tel");
+        contactNickname.setAttribute("autocomplete", "tel");
+      } else {
+        contactFieldLabel.textContent = "Ваш никнейм и платформа";
+        contactNickname.type = "text";
+        contactNickname.placeholder = "@nickname";
+        contactNickname.removeAttribute("inputmode");
+        contactNickname.setAttribute("autocomplete", "off");
+      }
+    };
+
+    const normalizePhoneDigits = (raw) => {
+      let d = raw.replace(/\D/g, "");
+      if (d.length === 11 && d.startsWith("8")) {
+        d = "7" + d.slice(1);
+      }
+      if (d.length === 10) {
+        d = "7" + d;
+      }
+      return d;
+    };
+
+    const isValidPhone = (digits) => {
+      if (digits.length === 11 && digits.startsWith("7")) {
+        return true;
+      }
+      return digits.length >= 12 && digits.length <= 15;
+    };
+
     const setActivePlatform = (platform) => {
       selectedPlatform = platform;
       socialButtons.forEach((button) => {
         button.classList.toggle("is-active", button.dataset.platform === platform);
       });
+      syncContactFieldForPlatform();
     };
+
+    syncContactFieldForPlatform();
 
     socialButtons.forEach((button) => {
       button.addEventListener("click", () => {
+        setStatus("");
         setActivePlatform(button.dataset.platform || "telegram");
       });
     });
@@ -245,12 +287,32 @@
     if (contactForm) {
       contactForm.addEventListener("submit", async (event) => {
         event.preventDefault();
-        const rawNickname = (contactNickname?.value || "").trim();
-        const cleanNickname = rawNickname.replace(/^@/, "");
+        const raw = (contactNickname?.value || "").trim();
 
-        if (!/^[A-Za-z0-9._]{3,64}$/.test(cleanNickname)) {
-          setStatus("Введите корректный никнейм (3-64 символа: буквы, цифры, точка, _).", true);
-          return;
+        let nicknameForMessage = "";
+        let profileLink = "";
+
+        if (selectedPlatform === "max") {
+          const phoneDigits = normalizePhoneDigits(raw);
+          if (!isValidPhone(phoneDigits)) {
+            setStatus(
+              "Введите корректный номер: 10 цифр мобильного РФ или 12–15 цифр в международном формате.",
+              true
+            );
+            return;
+          }
+          nicknameForMessage = `тел. +${phoneDigits}`;
+          profileLink = `tel:+${phoneDigits}`;
+        } else {
+          const cleanNickname = raw.replace(/^@/, "");
+          if (!/^[A-Za-z0-9._]{3,64}$/.test(cleanNickname)) {
+            setStatus("Введите корректный никнейм (3-64 символа: буквы, цифры, точка, _).", true);
+            return;
+          }
+          nicknameForMessage = `@${cleanNickname}`;
+          profileLink = selectedPlatform === "telegram"
+            ? `https://t.me/${cleanNickname}`
+            : `https://instagram.com/${cleanNickname}`;
         }
 
         if (!CONTACT_API_URL || CONTACT_API_URL.includes("your-worker-subdomain")) {
@@ -259,12 +321,6 @@
         }
 
         setStatus("Отправляю заявку...");
-        const nicknameForMessage = `@${cleanNickname}`;
-        const profileLink = selectedPlatform === "telegram"
-          ? `https://t.me/${cleanNickname}`
-          : selectedPlatform === "instagram"
-            ? `https://instagram.com/${cleanNickname}`
-            : "ссылка недоступна для MAX";
 
         try {
           const response = await fetch(CONTACT_API_URL, {
